@@ -43,7 +43,7 @@ const App: FC = () => {
   // api retrieves token, which is stored in react state and local storage
 
   const signUp = async (formData: UserProps): Promise<void> => {
-    const token: string = await JoblyApi.signUp(formData);
+    const { token }: {token: string} = await JoblyApi.signUp(formData);
     setLocalStorageToken(token);
     setToken(token);
   }
