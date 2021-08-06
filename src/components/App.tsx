@@ -6,12 +6,37 @@ import { UserPatchedProps, UserPatchProps, UserProps, UserTokenProps } from '../
 import JoblyApi from "../api";
 import jwt_decode from "jwt-decode";
 import AppContext from "./AppContext";
+import { Container, ThemeProvider, createTheme, colors, makeStyles } from "@material-ui/core";
+import { SnackbarProvider } from "notistack";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      'Source Sans Pro',
+      'Montserrat',
+    ].join(','),
+    caption: {
+      color: colors.grey[600],
+      fontSize: "1rem"
+    }
+  }
+});
+
+const useStyles = makeStyles({
+  warning: {
+    backgroundColor: colors.yellow[500],
+  },
+  info: {
+    background: colors.blue[900]
+  }
+});
 
 const App: FC = () => {
   const history = useHistory();
   const [token, setTokenState] = useState<string | undefined>(JoblyApi.token || undefined);
   const [userToken, setUserToken] = useState<UserTokenProps | undefined>(token ? jwt_decode<UserTokenProps>(token) : undefined);
   const [user, setUser] = useState<UserProps | undefined>();
+  const classes = useStyles(); 
 
   // Function to set token both in React state, and jobly API
   const setToken = (token: string | undefined) => {
@@ -97,12 +122,22 @@ const App: FC = () => {
   }
 
   return (
-      <>
-        <Nav signOut={signOut} username={userToken?.username} />
-        <AppContext.Provider value={{user, signIn, signUp, patchUser, applyToJob, isApplied, userToken}}>
-          <Routes />
-        </AppContext.Provider>
-        </>
+    <AppContext.Provider value={{user, signIn, signUp, patchUser, applyToJob, isApplied, userToken}}>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider 
+          classes={{
+            variantWarning: classes.warning,
+            variantInfo: classes.info,
+          }}
+          maxSnack={1}
+        >
+          <Nav signOut={signOut} username={userToken?.username}/>
+          <Container maxWidth="xl">
+            <Routes />
+          </Container>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </AppContext.Provider>
     );
 }
 

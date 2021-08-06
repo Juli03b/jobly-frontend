@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import { FC, useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Welcome from "./components/Welcome";
 import JobsList from "./components/JobList";
@@ -8,6 +8,7 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Profile from "./components/Profile";
 import AppContext from "./components/AppContext";
+import JobDetail from "./components/JobDetail";
 
 const Routes: FC = () => {
     const {userToken, user} = useContext(AppContext);
@@ -15,14 +16,6 @@ const Routes: FC = () => {
     <Switch>
         <Route exact path="/">
             <Welcome />
-        </Route>
-        <Route exact path="/companies">
-            {
-                user ?
-                <CompanyList />
-                :
-                <Redirect to="/" />
-            }
         </Route>
         <Route exact path="/profile">
         {
@@ -32,11 +25,18 @@ const Routes: FC = () => {
                 <Redirect to="/" />
             }
         </Route>
-        <Route exact path="/jobs">
-
+        <Route exact path="/companies">
             {
-                user ? 
-                <JobsList />
+                userToken ? 
+                <CompanyList searchBar={true} />
+                :
+                <Redirect to="/" />
+            }
+        </Route>
+        <Route exact path="/jobs">
+            {
+                userToken ? 
+                <JobsList searchBar={true} />
                 :
                 <Redirect to="/" />
             }
@@ -46,6 +46,14 @@ const Routes: FC = () => {
         </Route>
         <Route exact path="/sign-up">
             <SignUp />
+        </Route>
+        <Route exact path="/jobs/:handle">
+            {
+                userToken ? 
+                <JobDetail />
+                :
+                <Redirect to="/" />
+            }
         </Route>
         <Route exact path="/companies/:handle">
             {

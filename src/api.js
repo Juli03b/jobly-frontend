@@ -61,17 +61,17 @@ class JoblyApi {
     return res;
   }
   
-  /** Get details on a job by handle. */
+  /** Get details on a job by id. */
 
-  static async getJob(handle) {
-    let res = await this.request(`jobs/${handle}`);
-    return res.company;
+  static async getJob(id) {
+    let { job } = await this.request(`jobs/${id}`);
+    return job;
   }
   
-  //  Search for jobs by handle
+  //  Search for jobs by title
 
-  static async searchJobs(handle) {
-    let res = await this.request(`jobs/`, {title: handle});
+  static async searchJobs(title) {
+    let res = await this.request(`jobs/`, {title});
     return res;
   }
 

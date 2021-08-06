@@ -1,5 +1,6 @@
-import React from "react";
+import { createContext } from "react";
 import { UserProps, UserTokenProps } from "../interfaces";
+
 interface AppContextProps {
     user: UserProps | undefined;
     userToken: UserTokenProps | undefined;
@@ -11,7 +12,7 @@ interface AppContextProps {
     isApplied: Function;
 }
 
-export default React.createContext<AppContextProps>({
+export default createContext<AppContextProps>({
     user: undefined,
     userToken: undefined,
     signIn: Function,

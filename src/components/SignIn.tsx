@@ -1,3 +1,4 @@
+import { Container, TextField } from "@material-ui/core";
 import React, { FC, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserSignInProps } from "../interfaces";
@@ -15,18 +16,28 @@ const SignIn: FC = () => {
         e.preventDefault();
         signIn(formData);
     }
-
+    
     return (
-        <form onSubmit={onSubmit} className="row m-5">
-            <div className="col-6 mx-auto">
-                <input type="text" name="username" value={formData.username} onChange={inputChange} placeholder="Enter username" className="form-control input-group mb-3 mx-auto"/>
-                <input type="password" name="password" value={formData.password} onChange={inputChange} placeholder="Enter password" className="form-control input-group mb-3 mx-auto"/>
-                <p className="text-muted">Or sign up <Link to="/sign-up">here</Link></p>
-            </div>
-            <div className="">
-                <button type="submit" className="btn btn-md btn-outline-dark mb-3 mx-auto d-block">Sign In</button>
-            </div>
-        </form> );
+        <Container maxWidth="md" className="m-5 mx-auto">
+            <form onSubmit={onSubmit}>
+                <div className="mx-auto">
+                <TextField
+                  error
+                  id="outlined-error-helper-text"
+                  label="Error"
+                  defaultValue="Hello World"
+                  helperText="Incorrect entry."
+                  variant="outlined"
+                />
+                    <input type="text" name="username" value={formData.username} onChange={inputChange} placeholder="Enter username" className="form-control input-group mb-3 mx-auto"/>
+                    <input type="password" name="password" value={formData.password} onChange={inputChange} placeholder="Enter password" className="form-control input-group mb-3 mx-auto"/>
+                    <p className="text-muted">Or sign up <Link to="/sign-up">here</Link></p>
+                </div>
+                <div className="">
+                    <button type="submit" className="btn btn-md btn-outline-dark mb-3 mx-auto d-block">Sign In</button>
+                </div>
+            </form>
+        </Container> );
 }
 
 export default SignIn;

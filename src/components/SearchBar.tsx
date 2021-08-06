@@ -1,25 +1,20 @@
 // search bar that runs function in parent component.
 import { FC, useState } from 'react';
+import SearchBarMui from 'material-ui-search-bar';
+import { useEffect } from 'react';
 
-const SearchBar: FC<{onSearch: Function}> = ({onSearch}: {onSearch: Function}) => {
-    const [query, setQuery] = useState<string>("");
-    const inputChange = (e: any) => {
-        const { value } = e.target;
-        setQuery(value);
-        onSearch(value)
-    }
-    const onSubmit = (e: any) => {
-        e.preventDefault();
-        onSearch(query);
-    }
+const SearchBar: FC<{onSearch: Function, placeholder?: string}> = ({onSearch, placeholder = "Search"}) => {
+    const [query, setQuery] = useState<string>();
+
+    useEffect(() => onSearch(query), [query]);
 
     return (
-        <form onSubmit={onSubmit} className="m-5 text-center">
-            <div className="mx-auto">
-                <input type="text" value={query} onChange={inputChange} placeholder="Enter query" className="form-control input-group w-50 d-inline"/>
-                <button type="submit" className="btn btn-md btn-outline-dark mx-3">Search</button>
-            </div>
-        </form>
+        <SearchBarMui
+            value={query}
+            onChange={(query) => setQuery(query)}
+            onRequestSearch={() => onSearch(query)}
+            placeholder={placeholder}
+        />
     );
 }
 

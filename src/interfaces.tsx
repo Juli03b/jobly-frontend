@@ -1,17 +1,19 @@
 export interface JobProps {
     title: string;
-    description: string;
     salary: number | null;
     equity: number | null;
-    id?: number;
-    companyHandle?: string;
+    id: number;
+    companyName: string;
+    companyHandle: string;
+    company?: CompanyProps;
+    img?: string;
 }
 export interface CompanyProps {
     handle: string;
     name: string;
     numEmployees: number;
     description: string;
-    logoUrl: string;
+    img?: string;
     jobs: JobProps[];
 }
 export interface UserProps {
