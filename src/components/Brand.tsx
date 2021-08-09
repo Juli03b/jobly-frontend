@@ -3,14 +3,13 @@ import { FC } from 'react';
 
 const useStyles = makeStyles(({
     brand: {
-        textDecoration: "underline overline",
         textDecorationThickness: "from-font",
         fontWeight: 300
     }
 }));
-
+// Dumb component to render brand 
 export const Brand: FC<{size: "small" | "large"}> = ({size}) => {
-    const classes = useStyles()
+    const classes = useStyles();
 
     return (
         <Typography 
