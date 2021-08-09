@@ -7,6 +7,12 @@ import { useSnackbar, VariantType } from 'notistack';
 export const useQuery = () => {
     return new URLSearchParams(useLocation().search);
 }
+
+/* Hook for displaying snackbar alerts.
+*
+* defaultMsg: message to use if no further message provided
+* defaultVarint: variant to use if no further variant provided
+*/
 export const useAlert = (defaultMsg?: string, defaultVariant?: VariantType) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar(); 
   const snackbar = (msg?: string, variant?: VariantType) => enqueueSnackbar(defaultMsg || msg, {
