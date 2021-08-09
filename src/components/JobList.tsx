@@ -4,11 +4,24 @@ import SearchBar from './SearchBar';
 import { JobProps } from '../interfaces';
 import { FC, useEffect, useState } from 'react';
 import { useQuery } from '../hooks';
-import { GridSize } from '@material-ui/core';
 import { Loading } from './Loading';
 
-// Component to show jobs
-const JobList: FC<{jobAmt?: number, xsVal?: GridSize, searchBar?: boolean}> = ({jobAmt, xsVal = 3, searchBar = false}) => {
+/** Component to show jobs
+ * 
+ * Fetch all jobs if query not detected from url,
+ * if query detected, show results for query.
+ * 
+ * Props:
+ * 
+ * jobAmt: ammount of jobs to show, 
+ * optional (will show all if not provided).
+ * 
+ * searchBar: boolean to decide to show the 
+ * search bar, optional (will not show if not true).
+ * 
+ */
+
+const JobList: FC<{jobAmt?: number, searchBar?: boolean }> = ({ jobAmt, searchBar = false }) => {
   const [jobs, setJobs] = useState<JobProps[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const jobFilter = (jobs: JobProps[]) => jobs.slice(0, jobAmt || jobs.length);
@@ -18,38 +31,33 @@ const JobList: FC<{jobAmt?: number, xsVal?: GridSize, searchBar?: boolean}> = ({
     const queryStr = query.get("query");
     const getJobs = async () => {
       const { jobs }: { jobs: JobProps[] } = await JoblyApi.getJobs();
-      console.log(jobs)
+
       setJobs(jobFilter(jobs));
       setIsLoading(false)
     }
     const searchJobs = async (queryStr: string) => {
       const { jobs }: { jobs: JobProps[] } = await JoblyApi.searchJobs(queryStr);
+      
       setJobs(jobFilter(jobs));
       setIsLoading(false);
     }
     queryStr ? searchJobs(queryStr) : getJobs();
   }, []);
-  
+
   const onSearch = async (query: string) => {
-    if(query){
+    if (query) {
       const { jobs } = await JoblyApi.searchJobs(query);
       setJobs(jobFilter(jobs));
-    }else{
+    } else {
       setJobs(jobFilter(jobs));
     }
-  } 
+  }
 
+  if(isLoading) return <Loading />
   return (
-    
     <div>
-      { isLoading ?
-        <Loading />
-      :
-      <>
-          {searchBar && <SearchBar onSearch={onSearch} placeholder="Search jobs" />}
-          <Jobs xsVal={xsVal} jobs={jobs}/>
-      </>
-      }
+      {searchBar && <SearchBar onSearch={onSearch} placeholder="Search jobs" />}
+      <Jobs jobs={jobs} />
     </div>
   );
 }
