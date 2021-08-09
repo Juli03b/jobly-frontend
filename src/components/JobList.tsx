@@ -13,10 +13,10 @@ import { Loading } from './Loading';
  * 
  * Props:
  * 
- * jobAmt: ammount of jobs to show, 
+ * jobAmt - ammount of jobs to show, 
  * optional (will show all if not provided).
  * 
- * searchBar: boolean to decide to show the 
+ * searchBar - boolean to decide to show the 
  * search bar, optional (will not show if not true).
  * 
  */

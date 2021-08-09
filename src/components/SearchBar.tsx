@@ -3,6 +3,16 @@ import { FC, useState } from 'react';
 import SearchBarMui from 'material-ui-search-bar';
 import { useEffect } from 'react';
 
+/** Component to show search bar
+ * 
+ * Props:
+ * 
+ * onSearch: function to call, pass input text
+ * 
+ * placeholder: optional prop to show different 
+ * placeholder text
+ * 
+ */
 const SearchBar: FC<{onSearch: Function, placeholder?: string}> = ({onSearch, placeholder = "Search"}) => {
     const [query, setQuery] = useState<string>();
 
@@ -11,7 +21,7 @@ const SearchBar: FC<{onSearch: Function, placeholder?: string}> = ({onSearch, pl
     return (
         <SearchBarMui
             value={query}
-            onChange={(query) => setQuery(query)}
+            onChange={setQuery}
             onRequestSearch={() => onSearch(query)}
             placeholder={placeholder}
         />
