@@ -12,10 +12,21 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
   }),
 );
-const Companies: FC<{companies: CompanyProps[], xsVal?: GridSize}> = ({companies, xsVal = 3}) => {
+// Dumb component to render a list of companies.
+// Uses grid to layout cards.
+const Companies: FC<{companies: CompanyProps[], smVal?: GridSize, mdVal?: GridSize, lgVal?: GridSize, xlVal?: GridSize}> = ({companies, smVal = 12, mdVal = 6, lgVal = 4, xlVal = 4}) => {
   const classes = useStyles();
   const companiesJsx = companies.map(({name, description, handle, numEmployees, jobs, img }) => (
-    <Grid item xs={xsVal} className={classes.grid} key={handle}>
+    <Grid 
+      item
+      xs={12}
+      sm={smVal}
+      md={mdVal}
+      lg={lgVal}
+      xl={xlVal}
+      className={classes.grid}
+      key={handle}
+    >
       <Company
         name={name} 
         numEmployees={numEmployees} 

@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect } from 'react';
+import { FC, useContext } from 'react';
 import { CompanyProps } from '../interfaces';
 import { Card, CardActionArea, CardActions, CardMedia, makeStyles, Typography, CardContent } from '@material-ui/core';
 import { Link } from 'react-router-dom';
@@ -25,7 +25,8 @@ const useStyles = makeStyles({
     }
 });
 
-// Dumb component to render a company
+// Dumb component to render a company.
+// Use api for random image if no image provided
 const Company: FC<CompanyProps> = ({name, numEmployees, description, handle, img = coolImages.one(150, 300, false)}) => {
     const { user } = useContext(AppContext);
     const classes = useStyles();
@@ -34,7 +35,6 @@ const Company: FC<CompanyProps> = ({name, numEmployees, description, handle, img
     return (
         <Card className={classes.card} onClick={() => !user && alert()}>
             <Link to={`/companies/${handle}`} component={CardActionArea} className={!user ? `btn disabled` : ``}>
-                {console.log(img, name)}
                 <CardMedia component="img"
                     alt={`${name} photo`} height={150} width={300}
                     image={img}
