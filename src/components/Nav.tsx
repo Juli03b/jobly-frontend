@@ -19,6 +19,9 @@ const useStyles = makeStyles({
     }
 });
 
+// Component to show nav bar show 
+// login and sign up options if 
+// no user is found
 const Nav: FC<{signOut: Function, username: string | undefined}> = ({signOut, username}) => {
     const classes = useStyles();
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -64,8 +67,7 @@ const Nav: FC<{signOut: Function, username: string | undefined}> = ({signOut, us
                         </BSNav>
                     </Collapse>
             </Navbar>
-        </div>
-);
-    }
+        </div>);
+}
 
 export default Nav;
