@@ -1,16 +1,15 @@
+import { Card, colors, createStyles, FormControl, Grid, Input, InputLabel, makeStyles, MenuItem, Select, Theme, Typography } from '@material-ui/core';
 import React, { FC, useContext, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import Container from '@material-ui/core/Container';
 import AppContext from './AppContext';
-import { ButtonGroup, Card, colors, createStyles, FormControl, Grid, Input, InputLabel, makeStyles, MenuItem, Select, Theme, Typography } from '@material-ui/core';
 import CompanyList from './CompanyList';
 import JobList from './JobList';
 import { useEffect } from 'react';
 import { Brand } from './Brand';
 import { useAlert } from '../hooks';
-import { NO_USER_MSG } from '../constants';
+import { NO_USER_MSG, BACKGROUND_IMG } from '../constants';
 
-const BACKGROUND_IMG = "https://digitaladdictsblog.com/wp-content/uploads/2018/01/Digital-Addicts-superior-spy-apps-catch-a-cheater-smartphone.jpg";
 const useStyles = makeStyles((theme: Theme) => createStyles({
     backgroundImg: { 
         background:`url(${BACKGROUND_IMG}) no-repeat`,
@@ -78,13 +77,6 @@ const Welcome: FC = () => {
             history.push(`/${name}`);
         }
     }
-    const onSeachButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        if(userToken){
-            return handleSearch(e);
-        }else{
-            alert();
-        }
-    }
 
     useEffect(() => {
         const initialSection = localStorage.getItem("initialSection");
@@ -113,20 +105,43 @@ const Welcome: FC = () => {
                     </Grid>
                     <form onSubmit={(e) => e.preventDefault()}>
                         <Grid item xs={12} style={{marginTop:"3rem"}}>
-                            <FormControl className="my-3" size="medium" style={{width:"13rem"}}  disabled={userToken ? false : true}>
-                                <InputLabel htmlFor="search-box" style={{fontSize: ".9rem"}}>Search for a job or a company</InputLabel>
+                            <FormControl
+                                className="my-3"
+                                size="medium"
+                                style={{width:"13rem"}}
+                                disabled={!!!userToken}
+                            >
+                                <InputLabel 
+                                    htmlFor="search-box" 
+                                    style={{fontSize: ".9rem"}}
+                                >
+                                    Search for a job or a company
+                                </InputLabel>
                                 <Input
                                   fullWidth 
                                   id="search-box"
                                   aria-describedby="search-box-small"
                                   value={query}
                                   onSubmit={(e) => e.preventDefault()}
-                                  onChange={(e) => setQuery(e.target.value)} 
-                                  disabled={userToken ? false : true}
+                                  onChange={(e) => setQuery(e.target.value)}
+                                  onClick={() => !userToken && alert()}
+                                  autoComplete="off"
                                 />
                                 <div className={classes.buttonGroup}>
-                                    <button className="btn btn-md btn-outline-dark mx-1 mb-1" name="jobs" onClick={onSeachButtonClick}>Jobs</button>
-                                    <button className="btn btn-md btn-outline-dark mx-1 mb-1" name="companies" onClick={onSeachButtonClick}>Companies</button>
+                                    <button 
+                                        className="btn btn-md btn-outline-dark mx-1 mb-1"
+                                        name="jobs"
+                                        onClick={(e) => userToken ? handleSearch(e) : alert()}
+                                    >
+                                        Jobs
+                                    </button>
+                                    <button 
+                                        className="btn btn-md btn-outline-dark mx-1 mb-1"
+                                        name="companies"
+                                        onClick={(e) => userToken ? handleSearch(e) : alert()}
+                                    >
+                                        Companies
+                                    </button>
                                 </div>
                             </FormControl>
                         </Grid>
@@ -161,11 +176,11 @@ const Welcome: FC = () => {
                 {
                     section === "jobs" ? (
                         <Grid item xs={12}>
-                            <JobList jobAmt={10} xsVal={3} searchBar={false} />
+                            <JobList jobAmt={10} searchBar={false} />
                         </Grid>
                     ): (
                         <Grid item xs={12}>
-                            <CompanyList companyAmt={10} xsVal={4} searchBar={false} />
+                            <CompanyList companyAmt={10} searchBar={false} />
                         </Grid>
                     )
                 }
