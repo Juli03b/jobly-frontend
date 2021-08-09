@@ -19,7 +19,7 @@ const Routes: FC = () => {
         </Route>
         <Route exact path="/profile">
         {
-                user ? 
+                userToken ? 
                 <Profile />
                 :
                 <Redirect to="/" />
