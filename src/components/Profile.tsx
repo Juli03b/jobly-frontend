@@ -1,57 +1,99 @@
-import React, { FC, useContext, useEffect, useState } from "react";
-import { Card, CardBody} from "reactstrap";
+import { Container, Grid, InputLabel, makeStyles, TextField, Typography } from "@material-ui/core";
+import { FC, useContext, useEffect, useState } from "react";
 import { JobProps, UserPatchProps } from "../interfaces";
 import AppContext from "./AppContext";
 import Jobs from "./Jobs";
+import { Loading } from "./Loading";
+import { useFormik } from 'formik'
+import * as yup from 'yup';
+import Form from "./Form";
 
+const useStyles = makeStyles({
+    formLabel: {
+        marginBottom: "1rem",
+        fontSize: "1.5rem"
+    },
+    name: {
+        fontSize: "1.5rem",
+        textAlign: "center",
+        fontFamily: "Montserrat"
+    },
+    container: {
+        marginTop: "5rem"
+    },
+    caption: {
+        fontSize: "2rem",
+        marginInline: "11%"
+    },
+    form: {
+        margin: "auto",
+        marginTop: "2rem",
+    }
+});
+const validationSchema = yup.object({
+    email: yup
+        .string()
+        .label("Enter email")
+        .email('Enter a valid email')
+        .required()
+    ,
+    password: yup
+        .string()
+        .label("Enter password")
+        .min(5, "Password should be at least 5 characters")
+        .required('Password required')
+    ,
+    firstName: yup
+        .string()
+        .label("Enter first name")
+        .min(1, "First name should be at least 1 character")
+    ,
+    lastName: yup
+        .string()
+        .label("Enter last name")
+        .min(1, "Last name should be at least 1 character")
+});
 const Profile: FC = () => {
-    const INITIAL_STATE: UserPatchProps = {password: "", firstName: "", lastName: "", email: ""}
+    const FORM_INITIAL_STATE: UserPatchProps = { password: "", firstName: "", lastName: "", email: "" }
     const { patchUser, user } = useContext(AppContext);
     const [jobs, setJobs] = useState<JobProps[]>([])
-    const [formData, setFormData] = useState(INITIAL_STATE);    
-    const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setFormData(data => ({...data, [name]: value}));
-    }
-    const onSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        patchUser(formData);
-    }
+    const classes = useStyles();
+    const formik = useFormik({
+        initialValues: FORM_INITIAL_STATE,
+        validationSchema: validationSchema,
+        onSubmit: (values) => patchUser(values)
+    });
 
-    // console.log(user, "user ")
-    useEffect(() => {if(user) setJobs(user.jobs)}, [user]);
+    useEffect(() => { if (user) setJobs(user.jobs) }, [user]);
 
+    if(!user) return <Loading />
     return (
-        <div className="m-3">
-            {
-                user?.jobs ?
-                <>
-                    <Card className="w-25 mx-auto mt-5">
-                        <CardBody>
-                            <p className="fs-3 text-muted">{user.username}</p>
-                            <p className="fs-3">{`${user.firstName} ${user.lastName}`}</p>   
-                        </CardBody>
-                    </Card>
-                    <form onSubmit={onSubmit} className="mt-5">
-                    <div className="w-25 mx-auto">
-                        <input type="password" name="password" value={formData.password} onChange={inputChange} placeholder="Enter password" className="form-control input-group mb-3 mx-auto"/>
-                        <input type="text" name="firstName" value={formData.firstName} onChange={inputChange} placeholder="Enter first name" className="form-control input-group mb-3 mx-auto"/>
-                        <input type="text" name="lastName" value={formData.lastName} onChange={inputChange} placeholder="Enter last name" className="form-control input-group mb-3 mx-auto"/>
-                        <input type="email" name="email" value={formData.email} onChange={inputChange} placeholder="Enter email" className="form-control input-group mb-3 mx-auto"/>
-                    </div>
-                    <div>
-                        <button type="submit" className="btn btn-md btn-outline-dark mb-3 mx-auto d-block">Update Profile</button>
-                    </div>
-                    </form>
-                    <div className="mt-5">
-                        <p className="display-5 mx-3">Jobs you've applied to </p>
-                        <Jobs jobs={jobs} />
-                    </div>
-                </>
-                :
-                <p>Loading...</p>
-            }
-        </div>);
+        <Container maxWidth="lg" className={classes.container}>
+            <Grid
+                container
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                spacing={3}
+            >
+                <Grid item xs={12} className={classes.name}>
+                    <Typography variant="caption" className={classes.caption}>Username</Typography>
+                        <Typography className={classes.name} variant="h5">{user.username}</Typography>
+                </Grid>
+                <Grid item xs={12} className={classes.name}>
+                    <Typography variant="caption" className={classes.caption}>Name</Typography>
+                        <Typography className={classes.name} variant="h5">{`${user.firstName} ${user.lastName}`}</Typography>
+                </Grid>
+                <Grid item xs={3} className={classes.form}>
+                    <Form password firstName lastName email buttonText="Edit User" mode="patch" onSubmit={patchUser} />
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="caption" className={classes.caption}>Jobs you've applied to </Typography>
+                    {jobs && <Jobs jobs={jobs} />}
+                </Grid>
+            </Grid>
+        </Container>
+    );
 }
 
 export default Profile;
