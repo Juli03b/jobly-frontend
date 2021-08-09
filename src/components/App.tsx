@@ -67,29 +67,45 @@ const App: FC = () => {
   // Sign up - use api to create user with form data,
   // api retrieves token, which is stored in react state and local storage
 
-  const signUp = async (formData: UserProps): Promise<void> => {
-    const { token }: {token: string} = await JoblyApi.signUp(formData);
-    setLocalStorageToken(token);
-    setToken(token);
+  const signUp = async (formData: UserProps, setError: (msg: string, property?: any) => void): Promise<void> => {
+    try {
+      const { token }: {token: string} = await JoblyApi.signUp(formData);
+      setLocalStorageToken(token);
+      setToken(token);
+      history.push("/");
+    } catch ([msg]) {
+      if(!msg.includes("instance.")) return setError(msg);
+
+      const fullErrorSplit: [string] = msg.split(" ");
+      const [errorInstance]: [errorInstance: string] = fullErrorSplit;
+
+      const errorPropery = errorInstance.substr(errorInstance.indexOf(".") + 1);
+      const errorMsg = fullErrorSplit.slice(1).join(" ")
+
+      setError(`${errorPropery} ${errorMsg}`, errorPropery)
+    }
   }
 
   // Sign in - use api to retrieve user token,
   // set token state, and set token in LocalStorage
 
-  const signIn = async (formData: UserProps): Promise<void> => {
-    if(!JoblyApi.token){
-      const { token }: {token: string} = await JoblyApi.signIn(formData);
+  const signIn = async (formData: UserProps, setError: (msg: string) => void): Promise<void> => {
+    try {
+      const {token}: {token: string} = await JoblyApi.signIn(formData);
+      
       setLocalStorageToken(token);
       setToken(token);
+      history.push("/");
+    } catch ([msg]) {
+      setError(msg);
     }
-    
-    history.push("/");
   }
 
   // Patch user - change user's information,
   // api retrieves new user's info
-  const patchUser = async (formData: UserPatchProps): Promise<void> => {
-    if(user){
+  const patchUser = async (formData: UserPatchProps, setError: (msg: string) => void, setSuccess: () => void): Promise<void> => {
+    if(!user) return;
+    try{
       const { user: patchedUser }: { user: UserPatchedProps } = await JoblyApi.patchUser(user.username, formData);
       const fullUser: UserProps = {
         username: patchedUser.username,
@@ -100,16 +116,18 @@ const App: FC = () => {
         jobs: user.jobs,
         applications: user.applications
       }
-      setUser(() => (fullUser));
+      setUser(fullUser);
+      setSuccess()
+    }catch([msg]){
+      setError(msg);
     }
   }
 
   // Apply to job - user applies to job using API
   const applyToJob = async (id: number, setState: Function): Promise<void> => {
-    if(user){
-      const job = await JoblyApi.applyToJob(user.username, id);
-      if(job?.applied) setState(true);
-    }
+    if(!user) return;
+    const job = await JoblyApi.applyToJob(user.username, id);
+    if(job?.applied) setState(true);
   }
 
   // Is applied? - check if user has applied to job
