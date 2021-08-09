@@ -1,67 +1,87 @@
 import JoblyApi from '../api';
-import { Link, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { FC, useEffect, useState } from 'react';
-import { CompanyProps, JobProps } from '../interfaces';
+import { JobProps } from '../interfaces';
 import { Container, makeStyles, Typography } from '@material-ui/core';
 import { Loading } from './Loading';
 import Company from './Company';
+import { useAlert } from '../hooks';
 
 const useStyles = makeStyles({
     title: {
-        fontSize: "5rem",
+        fontSize: "4.5rem",
         marginBottom: "1rem"
     },
     label: {
         fontSize: "1.5rem",
-        textDecoration: "underline"
     },
     caption: {
         fontSize: "2rem"
     },
     jobsContainer: {
         float: "left",
-        marginTop: "1rem"
+        margin: "1.5rem"
+    },
+    container: {
+        margin: "1rem",
+        marginTop: "2.5%"
     }
 });
-const coolImages = require("cool-images");
-// Component to render company
+// Component to render job with details like:
+// title, salary, equity, and company
 const JobDetail: FC = () => {
-    const [job, setJob] = useState<JobProps>()
+    const [job, setJob] = useState<JobProps>();
     const { handle } = useParams<{ handle: string }>();
+    const alert = useAlert(undefined, "error");
+    const history = useHistory();
     const classes = useStyles();
 
     useEffect((): void => {
-        const getJob = async () => {
-            const job = await JoblyApi.getJob(handle);
-            console.log(job)
-            setJob(job)
+        try {
+            const getJob = async () => {
+                const job = await JoblyApi.getJob(handle);
+                setJob(job)
+            }
+
+            getJob();
+        } catch ([msg]) {
+            alert(msg);
+            history.push("/jobs");
         }
-        getJob();
+
     }, [handle]);
 
+    if (!job) return <Loading />
     return (
-            job ? 
-                <Container className="m-3">
-                    <div>
-                        <Typography variant="h1" className={classes.title}>{job.title}</Typography>
-                        <Typography className={classes.label}>Salary</Typography>
-                            <Typography variant="caption" className={classes.caption}>{job.salary || "N/A"}</Typography>
-                        <Typography className={classes.label}>Equity</Typography>
-                            <Typography variant="caption" className={classes.caption}>{job.equity || "N/A"}</Typography>
-                    </div>
-                    <div style={{marginTop: "1rem"}}>
-                        <Typography variant="caption" className={classes.caption} style={{marginTop: "1rem"}} component="p">Company:</Typography>
-                        <div className={classes.jobsContainer}>
-                            {
-                                job.company && (({handle, name, numEmployees, description, img, jobs}: CompanyProps) => (
-                                    <Company handle={handle} name={name} numEmployees={numEmployees} description={description} img={img} jobs={jobs} />
-                                ))(job.company)
-                            }
-                        </div>
-                    </div>
-                </Container>
-            :
-                <Loading /> 
+        <Container className={classes.container}>
+            <div>
+                <Typography variant="h1" className={classes.title} >{job.title}</Typography>
+                <Typography variant="caption" className={classes.label}>Salary</Typography>
+                    <Typography variant="subtitle1" className={classes.caption}>{job.salary || "N/A"}</Typography>
+                <Typography variant="caption" className={classes.label}>Equity</Typography>
+                    <Typography variant="subtitle1" className={classes.caption}>{job.equity || "N/A"}</Typography>
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+                <Typography
+                    variant="caption"
+                    className={classes.caption}
+                    style={{ marginTop: "1rem" }}
+                    component="p"
+                >Company</Typography>
+                <div className={classes.jobsContainer}>
+                    {job.company &&
+                        <Company
+                            handle={job.company.handle}
+                            name={job.company?.name}
+                            numEmployees={job.company?.numEmployees}
+                            description={job.company?.description}
+                            img={job.company?.img}
+                            jobs={job.company?.jobs}
+                        />
+                    }
+                </div>
+            </div>
+        </Container>
     );
 }
 
