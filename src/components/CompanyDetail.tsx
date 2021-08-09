@@ -1,16 +1,15 @@
 import JoblyApi from '../api';
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { FC, useEffect, useState } from 'react';
-import { CompanyProps, JobProps } from '../interfaces';
+import { CompanyProps } from '../interfaces';
 import { Container, Grid, makeStyles, Typography } from '@material-ui/core';
-import Company from './Company';
-import Job from './Job';
 import Jobs from './Jobs';
 import { Loading } from './Loading';
+import { useAlert } from '../hooks';
 
 const useStyles = makeStyles({
     title: {
-        fontSize: "5rem",
+        fontSize: "4.5rem",
         marginBottom: "1rem"
     },
     label: {
@@ -25,32 +24,45 @@ const useStyles = makeStyles({
     },
     body: {
         fontSize: "1.2rem",
+    },
+    container: {
+        margin: "1rem",
+        marginTop: "2.5%"
     }
 });
-// Component to render company
+// Component to render company with details like:
+// name, number of employees, description, and jobs
 const CompanyDetail: FC = () => {
-    const [company, setCompany] = useState<CompanyProps>()
+    const [company, setCompany] = useState<CompanyProps>();
     const { handle } = useParams<{ handle: string }>();
+    const alert = useAlert(undefined, "error");
+    const history = useHistory();
     const classes = useStyles();
 
     useEffect((): void => {
-        const getCompany = async () => {
-            const company = await JoblyApi.getCompany(handle);
-            setCompany(company);
+        try {
+            const getCompany = async () => {
+                const company = await JoblyApi.getCompany(handle);
+                setCompany(company);
+            }
+
+            getCompany();
+        } catch ([msg]) {
+            alert(msg);
+            history.push("/companies");
         }
-        getCompany();
     }, []);
 
+    if (!company) return <Loading />
     return (
-        company ? 
         <>
-            <Container className="m-3">
+            <Container className={classes.container}>
                 <div>
                     <Typography variant="h1" className={classes.title}>{company.name}</Typography>
                     <Typography variant="caption" className={classes.caption}>{company.numEmployees || "N/A"} Employees</Typography>
                     <Typography variant="body1" className={classes.body}>{company.description}</Typography>
                 </div>
-                    <Typography variant="caption" className={classes.caption} style={{marginTop: "1rem"}} component="p">Jobs:</Typography>
+                <Typography variant="caption" className={classes.caption} style={{ marginTop: "1rem" }} component="p">Jobs</Typography>
             </Container>
             <Grid
                 container
@@ -60,13 +72,10 @@ const CompanyDetail: FC = () => {
                 spacing={1}
             >
                 <Grid item xs={12}>
-                   <Jobs jobs={company.jobs} xsVal={2} />
+                    <Jobs jobs={company.jobs} />
                 </Grid>
             </Grid>
         </>
-        
-    :
-        <Loading /> 
     );
 }
 
