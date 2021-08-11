@@ -16,6 +16,11 @@ const useStyles = makeStyles({
     navbarBrand: {
         fontWeight: 400,
         color: colors.blue[600]
+    },
+    bsNav: {
+        width: "100%",
+        alignItems: "center !important",
+        justifyContent: "flex-end !important"
     }
 });
 
@@ -34,9 +39,9 @@ const Nav: FC<{signOut: Function, username: string | undefined}> = ({signOut, us
         <div>
             <Navbar light color="light" expand="lg" className="border border-top-0 border-start-0 border-end-0 border-dark border-bottom-5" style={{fontSize:"1.1rem"}}>
                 <NavbarBrand href="/"><Brand size="small" /></NavbarBrand>
-                <NavbarToggler onClick={toggleNavBar} />
+                <NavbarToggler onClick={toggleNavBar} style={{marginInline: "1rem"}} />
                     <Collapse isOpen={isOpen} navbar>
-                        <BSNav className="justify-content-end" style={{width: "100%"}} navbar>
+                        <BSNav className={classes.bsNav} navbar>
                             <NavItem onClick={() => !username && alert()}>
                                 <NavLink className={linkClassNames} to="/companies">Companies</NavLink>
                             </NavItem>
