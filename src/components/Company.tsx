@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react';
+import { FC, memo, useContext } from 'react';
 import { CompanyProps } from '../interfaces';
 import { Card, CardActionArea, CardActions, CardMedia, makeStyles, Typography, CardContent } from '@material-ui/core';
 import { Link } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { IMG_NOT_FOUND, NO_USER_MSG } from '../constants';
 const coolImages = require("cool-images");
 const useStyles = makeStyles({
     card: {
-        width: 350, 
+        width: 	"21.875rem", 
         height: 400,
         margin: "auto",
         transition: "0.3s",
@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 
 // Dumb component to render a company.
 // Use api for random image if no image provided
-const Company: FC<CompanyProps> = ({name, numEmployees, description, handle, img = coolImages.one(150, 300, false)}) => {
+const Company: FC<CompanyProps> = memo(({name, numEmployees, description, handle, img = coolImages.one(150, 300, false)}) => {
     const { user } = useContext(AppContext);
     const classes = useStyles();
     const alert = useAlert(NO_USER_MSG, "info");
@@ -53,6 +53,6 @@ const Company: FC<CompanyProps> = ({name, numEmployees, description, handle, img
         </Card>
 
     );
-}
+})
 
 export default Company;

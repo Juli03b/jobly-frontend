@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         color: theme.palette.text.primary,
       },
     gridContainer: {
-      padding: "4rem"
+      paddingTop: "4rem"
     },
   }),
 );

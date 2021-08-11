@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react';
+import { FC, memo, useContext, useState } from 'react';
 import { JobProps } from '../interfaces';
 import AppContext from './AppContext';
 import { Avatar, Card, CardActionArea, CardActions, CardContent, CardMedia, Chip, makeStyles, Typography } from "@material-ui/core"
@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 });
 // Dumb component to render a job.
 // Use api for random image if no image provided
-const Job: FC<JobProps> = ({ title, salary, equity, id, companyName, companyHandle, img = coolImages.one(150, 250, false) }) => {
+const Job: FC<JobProps> = memo(({ title, salary, equity, id, companyName, companyHandle, img = coolImages.one(150, 250, false) }) => {
     const [applied, setIsApplied] = useState(false);
     const { applyToJob, isApplied, user } = useContext(AppContext);
     const classes = useStyles();
@@ -91,6 +91,6 @@ const Job: FC<JobProps> = ({ title, salary, equity, id, companyName, companyHand
             </CardActions>
         </Card>
     );
-}
+})
 
 export default Job;
