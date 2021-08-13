@@ -3,7 +3,7 @@
 - Clone repo
 - Set up the backend and frontend
   - ### frontend
-    - Change directory into `/frontend`
+    - Change directory into `/jobly-frontend`
     - Install dependencies with `npm i` 
     - Start with `npm start`
     - Runs the app in the development mode.\
